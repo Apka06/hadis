@@ -9,17 +9,22 @@
     <p>Selamun aleyküm</p>
     <p>VeAleyküm Selam </p>
     {% if user.is_authenticated %}
-
+    <p>
+        <form method = "POST" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit">logout</button>
+        </form>
+        
+    </p>
     {% else %}
+    <p>
+        <a href="{% url 'register' %}">Register</a>
+    </p>
+    <p>
+        <a href="{% url 'login' %}">Login</a>
+    </p>
     {% endif %}
-    <p>
-        <a href="{% url 'register'%}">Register</a>
-    </p>
-    <p>
-        <a href="{% url 'login'%}">Login</a>
-    </p>
-    <p>
-        <a href="{% url 'logout'%}">logout</a>
-    </p>
+    
+    
 </body>
 </html>
