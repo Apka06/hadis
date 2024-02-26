@@ -9,3 +9,10 @@ class Favorites(models.Model):
 
     def __str__(self) -> str:
         return str(self.owner) + " 's " + str(self.number)
+    
+class Profile(models.Model):
+    user = models.OneToOneField(User, null=True, on_delete = models.CASCADE)
+
+    def __str__(self) -> str:
+        return str(self.user)
+    

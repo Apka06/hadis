@@ -1,0 +1,21 @@
+<h1>Profil</h1>
+<h2>Favoriler</h2>
+<ul>
+    {% for favorite in favorites %}
+    <li>
+        {{ favorite.number }} - {{ favorite.content }} 
+        <form action="{% url 'profile' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="favorite_id" value="{{ favorite.id }}">
+            <button type="submit" name="action" value="delete">Sil</button>
+        </form>
+    </li>
+    {% endfor %}
+</ul>
+<h2>Favori Ekle/Sil</h2>
+<form action="{% url 'profile' %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="add">
+    {{ form.as_p }}
+    <button type="submit">Ekle</button>
+</form>
