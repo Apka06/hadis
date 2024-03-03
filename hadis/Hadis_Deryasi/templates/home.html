@@ -8,6 +8,8 @@
 <body>
     <p>Selamun aleyküm</p>
     <p>VeAleyküm Selam </p>
+    <p><a href="{% url 'lugat' %}"> Lugat </a></p>
+    <p><a href="{% url 'hadis_deryasi' %}"> Hadis Deryası </a></p>
     {% if user.is_authenticated %}
     <p>
         <form method = "POST" action="{% url 'logout' %}">

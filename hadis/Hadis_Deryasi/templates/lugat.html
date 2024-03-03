@@ -1,0 +1,21 @@
+<table border="1">
+    <tr>
+        <td>onay</td>
+        <td>diger</td>
+        <td>isim</td>
+        <td>diger2</td>
+        <td>koku</td>
+        <td>kelime</td>
+
+    </tr>
+    {% for datadisplay in Sqlserverconn %}
+    <tr>
+        <td> {{datadisplay.onay}}</td>
+        <td> {{datadisplay.diger}}</td>
+        <td> {{datadisplay.isim}}</td>
+        <td> {{datadisplay.diger2}}</td>
+        <td> {{datadisplay.koku}}</td>
+        <td> {{datadisplay.kelime}}</td>
+    </tr>
+    {% endfor %}
+</table>

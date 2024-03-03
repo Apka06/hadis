@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Page</title>
+</head>
+<body>
+    <h1>Search</h1>
+    <form action="{% url 'hadis_deryasi' %}" method="GET"> {% csrf_token %}
+        <input type="text" name="query" placeholder="Aramak istediğiniz kelimeyi girin">
+        <button type="submit">Ara</button>
+        <br>
+        <label>Hadis seç:</label>
+        <select name="hadis" id="hadis">
+            <option value="buhari">Buhari</option>
+            <option value="muslim">Muslim</option>
+            <option value="nesai">Nesai</option>
+        </select>
+        {% if selected_hadis and kelime %}
+            <h3>Arama Yapılan Kitap: {{ selected_hadis }}</h3>
+            <h3>Arama Yapılan Kitap: {{ kelime }}</h3>
+        {% endif %}
+    <!-- Arama sonuçlarını gösterme kısmı -->
+    {% if search_result %}
+        <h2>Arama Sonuçları</h2>
+        <ul>
+        {% for result in search_result %}
+            <li>{{ result }}</li>
+            <br>
+        {% endfor %}
+        </ul>
+    {% endif %}
+</body>
+</html>

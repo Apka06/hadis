@@ -11,7 +11,7 @@ class UserRegisterView(generic.CreateView):
     template_name = 'registration/register.html'
     success_url = reverse_lazy('login')
 
-class ProfileView(generic.View):
+class ProfileView(generic.DetailView):
     def get(self, request):
         favorites = Favorites.objects.filter(owner=request.user)
         form = FavoritesForm()

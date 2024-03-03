@@ -5,3 +5,4 @@ class FavoritesForm(forms.ModelForm):
     class Meta:
         model = Favorites
         fields = ['number', 'content']
+

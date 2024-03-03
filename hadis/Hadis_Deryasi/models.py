@@ -2,6 +2,14 @@ from django.db import models
 from django.contrib.auth.models import User
 # Create your models here.
 
+class HadisDeryasi(models.Model):
+    def __str__(self) -> str:
+        return "hadis"
+
+class Home(models.Model):
+    def __str__(self) -> str:
+        return "home"
+
 class Favorites(models.Model):
     number = models.IntegerField(unique = True)
     content = models.CharField(max_length = 255)
@@ -16,3 +24,11 @@ class Profile(models.Model):
     def __str__(self) -> str:
         return str(self.user)
     
+class Sqlserverconn(models.Model):
+
+    onay = models.BooleanField()
+    diger = models.CharField(max_length = 100)
+    isim = models.CharField(max_length = 256)
+    diger2 = models.CharField(max_length = 100)
+    koku = models.CharField(max_length = 100)
+    kelime = models.CharField(max_length = 100)
