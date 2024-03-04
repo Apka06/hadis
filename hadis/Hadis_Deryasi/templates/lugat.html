@@ -1,21 +1,52 @@
-<table border="1">
-    <tr>
-        <td>onay</td>
-        <td>diger</td>
-        <td>isim</td>
-        <td>diger2</td>
-        <td>koku</td>
-        <td>kelime</td>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Page</title>
+</head>
 
-    </tr>
-    {% for datadisplay in Sqlserverconn %}
-    <tr>
-        <td> {{datadisplay.onay}}</td>
-        <td> {{datadisplay.diger}}</td>
-        <td> {{datadisplay.isim}}</td>
-        <td> {{datadisplay.diger2}}</td>
-        <td> {{datadisplay.koku}}</td>
-        <td> {{datadisplay.kelime}}</td>
-    </tr>
-    {% endfor %}
-</table>
+<body>
+    <a href="{% url 'home' %}"> Anasayfa</a>
+    <h1>Lugat</h1>
+    <form action="{% url 'lugat' %}" method="GET"> {% csrf_token %}
+        <input type="text" name="query" placeholder="Aramak istediğiniz kelimeyi girin">
+        <button type="submit">Ara</button>
+    </form>
+    <br>
+    <table border="1">
+        {% if Sqlserverconn %}
+        <tr>
+            <td>favori</td>
+            <td>kelime</td>
+            <td>açıklama</td>
+        </tr>
+        {% endif %}
+        {% for datadisplay in Sqlserverconn %}
+        <tr>
+            <td> 
+                <input type="checkbox" name="favori" {% if datadisplay.onay %}checked{% endif %}>
+            </td>
+            <td> 
+                {{datadisplay.diger}} 
+                {% if datadisplay.diger2 %} 
+                <span>
+                    , {{datadisplay.diger2}}
+                </span> 
+                {% endif %}
+                {% if datadisplay.koku %} 
+                <span>
+                    , {{datadisplay.koku}}
+                </span> 
+                {% endif %}
+                {% if datadisplay.kelime %} 
+                <span>
+                    , {{datadisplay.kelime}}
+                </span> 
+                {% endif %}
+            </td>
+            <td> {{datadisplay.isim}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>

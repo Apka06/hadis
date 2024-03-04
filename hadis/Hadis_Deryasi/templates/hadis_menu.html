@@ -6,7 +6,8 @@
     <title>Search Page</title>
 </head>
 <body>
-    <h1>Search</h1>
+    <a href="{% url 'home' %}"> Anasayfa</a>
+    <h1>Hadis Deryası</h1>
     <form action="{% url 'hadis_deryasi' %}" method="GET"> {% csrf_token %}
         <input type="text" name="query" placeholder="Aramak istediğiniz kelimeyi girin">
         <button type="submit">Ara</button>
@@ -21,6 +22,7 @@
             <h3>Arama Yapılan Kitap: {{ selected_hadis }}</h3>
             <h3>Arama Yapılan Kitap: {{ kelime }}</h3>
         {% endif %}
+    </form>
     <!-- Arama sonuçlarını gösterme kısmı -->
     {% if search_result %}
         <h2>Arama Sonuçları</h2>

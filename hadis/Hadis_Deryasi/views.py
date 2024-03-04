@@ -3,6 +3,7 @@ from django.views.generic import ListView, View
 from .models import Home
 import pyodbc
 import re
+import langdetect
 
 def home(request):
     return render(request,'home.html',{})
@@ -46,12 +47,45 @@ class HadisDeryasiView(View):
     
     
 class SqlServerConnView(View):
+    
+    def is_arabic(self, text):
+        print(langdetect.detect(text))
+        return (langdetect.detect(text) == "ar")
+
     def get(self, request):
+
+        query = request.GET.get('query')
+
         conn = pyodbc.connect('Driver={sql server};'
                               'Server=LAPTOP-R60FAUB3\SQLEXPRESS;'
                               'Database=LugatDB;'
                               'Trusted_connection=yes')
         cursor = conn.cursor()
-        cursor.execute("select top 100 * from osmanlica")
-        result = cursor.fetchall()
+
+        result = None
+
+
+        if query:
+            length = len(str(query))
+            
+            if not self.is_arabic(query):
+                if length == 1:
+                    cursor.execute("select onay,diger,isim,diger2,koku,kelime from osmanlica where isim like '" + str(query) + "%'")
+                else:
+                    cursor.execute("select onay,diger,isim,diger2,koku,kelime from osmanlica where isim like '%" + query + "%'")
+
+            else:
+                if length == 1:
+                    cursor.execute("select onay,diger,isim,diger2,koku,kelime from osmanlica where koku like N'" + str(query) 
+                                + "%' or diger like N'" + str(query) 
+                                + "%' or diger2 like N'" + str(query) 
+                                + "%' or kelime like N'" + str(query) + "%'")
+                else:
+                    cursor.execute("select onay,diger,isim,diger2,koku,kelime from osmanlica where diger like N'%" + query
+                                + "%' or diger2 like N'%" + query
+                                + "%' or koku like N'%" + query
+                                + "%' or kelime like N'%" + query + "%'")
+            result = cursor.fetchall()
+            print(len(result))
+        
         return render(request, 'lugat.html', {'Sqlserverconn': result})
