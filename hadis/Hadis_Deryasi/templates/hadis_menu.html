@@ -17,6 +17,15 @@
             <option value="buhari">Buhari</option>
             <option value="muslim">Muslim</option>
             <option value="nesai">Nesai</option>
+            <option value="ebudavud">Ebudavud</option>
+            <option value="ibnmace">İbnmace</option>
+            <option value="tirmizi">Tirmizi</option>
+            <option value="ibnhibban">İbnhibban</option>
+            <option value="muvattamhmd">Muvatta Muhammed</option>
+            <option value="muvattamusab">Muvatta Mus'ab</option>
+            <option value="musnedahmed">Müsned Ahmed</option>
+
+
         </select>
         {% if selected_hadis and kelime %}
             <h3>Arama Yapılan Kitap: {{ selected_hadis }}</h3>
@@ -28,7 +37,7 @@
         <h2>Arama Sonuçları</h2>
         <ul>
         {% for result in search_result %}
-            <li>{{ result }}</li>
+            <li align = "right">{{ result }}</li>
             <br>
         {% endfor %}
         </ul>

@@ -3,7 +3,7 @@ from django.views import generic
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect
-from Hadis_Deryasi.models import Favorites
+from Hadis_Deryasi.models import FavoritesHadis
 from Hadis_Deryasi.forms import FavoritesForm
 
 class UserRegisterView(generic.CreateView):
@@ -13,7 +13,7 @@ class UserRegisterView(generic.CreateView):
 
 class ProfileView(generic.DetailView):
     def get(self, request):
-        favorites = Favorites.objects.filter(owner=request.user)
+        favorites = FavoritesHadis.objects.filter(owner=request.user)
         form = FavoritesForm()
         return render(request, 'registration/profile.html', {'favorites': favorites, 'form': form})
 
@@ -21,7 +21,7 @@ class ProfileView(generic.DetailView):
         if 'action' in request.POST:
             if request.POST['action'] == 'delete':
                 favorite_id = request.POST.get('favorite_id')
-                favorite = Favorites.objects.get(pk=favorite_id)
+                favorite = FavoritesHadis.objects.get(pk=favorite_id)
                 favorite.delete()
                 return redirect('profile')
 
@@ -29,11 +29,11 @@ class ProfileView(generic.DetailView):
         if form.is_valid():
             number = form.cleaned_data['number']
             content = form.cleaned_data['content']
-            Favorites.objects.create(number=number, content=content, owner=request.user)
+            FavoritesHadis.objects.create(number=number, content=content, owner=request.user)
             return redirect('profile')
         else:
             # Eğer form geçersizse, hata mesajlarını göstermek için kullanabilirsiniz
-            favorites = Favorites.objects.filter(owner=request.user)
+            favorites = FavoritesHadis.objects.filter(owner=request.user)
             return render(request, 'registration/profile.html', {'favorites': favorites, 'form': form})
 
         # Favori düzenleme veya silme işlemleri

@@ -1,8 +1,8 @@
 from django import forms
-from .models import Favorites
+from .models import FavoritesHadis
 
 class FavoritesForm(forms.ModelForm):
     class Meta:
-        model = Favorites
+        model = FavoritesHadis
         fields = ['number', 'content']
 

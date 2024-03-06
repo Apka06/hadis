@@ -16,6 +16,19 @@ class HadisDeryasiView(View):
 
     def __init__(self):
         self.arabic_pattern = "[\u0600-\u06FF]+"
+        self.star = "**"
+        self.underscore = "__________"
+        self.closing = ")"
+        self.seperator = {"buhari":self.star,
+                          "nesai":self.star,
+                          "muslim":self.star,
+                          "ebudavud":self.underscore,
+                          "tirmizi":self.underscore,
+                          "ibnmace":self.underscore,
+                          "ibnhibban":self.underscore,
+                          "muvattamhmd":self.closing,
+                          "muvattamusab":self.closing,
+                          "musnedahmed":self.closing,}
 
     def remove_diacritics(self, text):
         # Harekeleri kaldırmak için bir regex deseni
@@ -31,17 +44,19 @@ class HadisDeryasiView(View):
         query = request.GET.get('query')
         hadis = request.GET.get('hadis')
         hadis_file = str(hadis)
+        print(hadis_file)
         
         if query:
             #query = self.remove_diacritics(query) //harekeli aramayı harekesizleştirir.
-            with open(f'texts/{hadis_file}.txt', 'r', encoding="utf-8") as file:
-                paragraphs = file.read().split('**')  # Paragrafları * işaretine göre ayır
-            liste = []
+            with open(f'texts/hadis/{hadis_file}.txt', 'r', encoding="utf-8") as file:
+                paragraphs = file.read().split(self.seperator[hadis_file])  # Hadisleri kitabın kendi ayıracına göre ayırır.
+            result = []
             for paragraph in paragraphs:
-                if (query in paragraph) or (query in self.remove_diacritics(paragraph)):
-                    liste.append(paragraph)
+                if (query in paragraph) or (query in self.remove_diacritics(paragraph)): 
+                    result.append(paragraph)
            # Bulunan paragrafı ekrana 
-            return render(request, 'hadis_menu.html', {'kelime': query, "search_result": liste, 'selected_hadis': hadis,})
+            print(len(result))
+            return render(request, 'hadis_menu.html', {'kelime': query, "search_result": result, 'selected_hadis': hadis,})
         else:
             return render(request, 'hadis_menu.html', {"search_result": [],})
     

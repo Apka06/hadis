@@ -10,7 +10,7 @@ class Home(models.Model):
     def __str__(self) -> str:
         return "home"
 
-class Favorites(models.Model):
+class FavoritesHadis(models.Model):
     number = models.IntegerField(unique = True)
     content = models.CharField(max_length = 255)
     owner = models.ForeignKey(User, on_delete= models.CASCADE)
@@ -27,8 +27,8 @@ class Profile(models.Model):
 class Sqlserverconn(models.Model):
 
     onay = models.BooleanField()
-    diger = models.CharField(max_length = 100)
-    isim = models.CharField(max_length = 256)
-    diger2 = models.CharField(max_length = 100)
-    koku = models.CharField(max_length = 100)
-    kelime = models.CharField(max_length = 100)
+    diger = models.CharField(max_length = 100, null = True)
+    isim = models.CharField(max_length = 256, null = True)
+    diger2 = models.CharField(max_length = 100, null = True)
+    koku = models.CharField(max_length = 100, null = True)
+    kelime = models.CharField(max_length = 100, null = True)
