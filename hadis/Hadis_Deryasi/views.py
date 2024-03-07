@@ -64,7 +64,6 @@ class HadisDeryasiView(View):
 class SqlServerConnView(View):
     
     def is_arabic(self, text):
-        print(langdetect.detect(text))
         return (langdetect.detect(text) == "ar")
 
     def get(self, request):

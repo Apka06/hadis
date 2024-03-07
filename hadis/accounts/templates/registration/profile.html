@@ -2,24 +2,33 @@
     <a href="{% url 'home' %}"> Home </a>
 </p>
 <h1>Profil</h1>
-<h2>Favoriler</h2>
+<h2>Favori Hadisler</h2>
 
 <ul>
-    {% for favorite in favorites %}
+    {% for favorite in favorites_hadis %}
     <li>
-        {{ favorite.number }} - {{ favorite.content }} 
+        {{ favorite.number }} - {{ favorite.content }} - {{favorite.book}}
         <form action="{% url 'profile' %}" method="post">
             {% csrf_token %}
             <input type="hidden" name="favorite_id" value="{{ favorite.id }}">
+            <input type="hidden" name="favorite_type" value="hadis">
             <button type="submit" name="action" value="delete">Sil</button>
         </form>
     </li>
     {% endfor %}
 </ul>
-<h2>Favori Ekle/Sil</h2>
-<form action="{% url 'profile' %}" method="post">
-    {% csrf_token %}
-    <input type="hidden" name="action" value="add">
-    {{ form.as_p }}
-    <button type="submit">Ekle</button>
-</form>
+
+<h2>Favori Kelimeler</h2>
+<ul>
+    {% for favorite in favorites_kelime %}
+    <li>
+        {{ favorite.number }} - {{ favorite.word }} 
+        <form action="{% url 'profile' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="favorite_id" value="{{ favorite.id }}">
+            <input type="hidden" name="favorite_type" value="kelime">
+            <button type="submit" name="action" value="delete">Sil</button>
+        </form>
+    </li>
+    {% endfor %}
+</ul>

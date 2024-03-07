@@ -24,8 +24,11 @@
         {% endif %}
         {% for datadisplay in Sqlserverconn %}
         <tr>
-            <td> 
-                <input type="checkbox" name="favori" {% if datadisplay.onay %}checked{% endif %}>
+            <td>
+                <form action="." method="POST">
+                    <input type="checkbox" name="favori" {% if datadisplay.onay %}checked{% endif %}>
+                    <!-- <input type="hidden" name="favori_id" value="{{datadisplay.kid}}"> -->
+                </form>
             </td>
             <td> 
                 {{datadisplay.diger}} 
