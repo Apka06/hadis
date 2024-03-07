@@ -166,3 +166,4 @@ userenv/Scripts/pip.exe
 userenv/Scripts/pip3.11.exe
 userenv/Scripts/pip3.exe
 userenv/Scripts/sqlformat.exe
+userenv/
