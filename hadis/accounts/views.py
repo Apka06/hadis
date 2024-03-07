@@ -33,6 +33,7 @@ class ProfileView(generic.DetailView):
                 favorite.delete()
                 return redirect('profile')
 
+# zort
         # form = FavoritesForm(request.POST)
         # if form.is_valid():
         #     number = form.cleaned_data['number']
