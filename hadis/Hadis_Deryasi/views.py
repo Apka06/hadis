@@ -122,3 +122,5 @@ class SqlServerConnView(View):
                 owner=request.user
             )
         return redirect(request.META.get('HTTP_REFERER', '/'))
+    
+    #zort
