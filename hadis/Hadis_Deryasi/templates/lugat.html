@@ -4,12 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search Page</title>
+    <style>
+        /* Checkbox'ın boyutunu artırmak için örnek CSS */
+        .custom-checkbox {
+            transform: scale(1.5); /* Boyutu 1.5 katına çıkarır */
+        }
+    </style>
 </head>
 
 <body>
     <a href="{% url 'home' %}"> Anasayfa</a>
     <h1>Lugat</h1>
-    <form action="{% url 'lugat' %}" method="GET"> {% csrf_token %}
+    <form action="{% url 'lugat' %}" method="GET"> 
         <input type="text" name="query" placeholder="Aramak istediğiniz kelimeyi girin">
         <button type="submit">Ara</button>
     </form>
@@ -25,9 +31,13 @@
         {% for datadisplay in Sqlserverconn %}
         <tr>
             <td>
-                <form action="." method="POST">
-                    <input type="checkbox" name="favori" {% if datadisplay.onay %}checked{% endif %}>
-                    <!-- <input type="hidden" name="favori_id" value="{{datadisplay.kid}}"> -->
+                <form action="{% url 'lugat' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="checkbox" class="custom-checkbox" name="favori" disabled="True" {% if datadisplay.kid in user_favorites %}checked{% endif %}>
+                    <input type="hidden" name="favori_id" value="{{datadisplay.kid}}">
+                    <input type="hidden" name="word" value="{{datadisplay.diger}},{{datadisplay.diger2}},{{datadisplay.koku}}{{datadisplay.kelime}}">
+                    <input type="hidden" name="meaning" value="{{datadisplay.isim}}">
+                    <button type="submit">Add to Favorites</button>
                 </form>
             </td>
             <td> 

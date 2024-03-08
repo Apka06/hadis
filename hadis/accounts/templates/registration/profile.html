@@ -22,7 +22,7 @@
 <ul>
     {% for favorite in favorites_kelime %}
     <li>
-        {{ favorite.number }} - {{ favorite.word }} 
+        {{ favorite.number }} - {{ favorite.word }}: {{favorite.meaning}} 
         <form action="{% url 'profile' %}" method="post">
             {% csrf_token %}
             <input type="hidden" name="favorite_id" value="{{ favorite.id }}">

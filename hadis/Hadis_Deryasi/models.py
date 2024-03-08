@@ -18,7 +18,8 @@ class FavoritesHadis(models.Model):
 class FavoritesWord(models.Model):
     number = models.IntegerField(null = True)
     word = models.CharField(max_length = 255)
-    owner = models.ForeignKey(User, on_delete= models.CASCADE)
+    meaning = models.CharField(null = True, max_length = 512)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
         return str(self.owner) + " 's " + str(self.id)
@@ -26,6 +27,7 @@ class FavoritesWord(models.Model):
 
 class Sqlserverconn(models.Model):
 
+    kid = models.IntegerField(null = True)
     onay = models.BooleanField()
     diger = models.CharField(max_length = 100, null = True)
     isim = models.CharField(max_length = 256, null = True)

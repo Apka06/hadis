@@ -2,6 +2,6 @@ from django.urls import path
 from .views import HomeView, SqlServerConnView, HadisDeryasiView
 urlpatterns = [
     path('',HomeView.as_view(),name="home"),
-    path('lugat/', SqlServerConnView.as_view(), name="lugat"),
+    path('lugat', SqlServerConnView.as_view(), name="lugat"),
     path('hadis_deryasi/', HadisDeryasiView.as_view(), name="hadis_deryasi"),
 ]
