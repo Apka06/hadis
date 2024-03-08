@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from django.views.generic import ListView, View
 from .models import Home, FavoritesWord
-from .forms import FavoritesWordForm
 from django.shortcuts import redirect
 import pyodbc
 import re
@@ -122,5 +121,3 @@ class SqlServerConnView(View):
                 owner=request.user
             )
         return redirect(request.META.get('HTTP_REFERER', '/'))
-    
-    #zort
