@@ -31,14 +31,31 @@
         {% for datadisplay in Sqlserverconn %}
         <tr>
             <td>
-                <form action="{% url 'lugat' %}" method="POST">
+                <form id="favoriForm">
                     {% csrf_token %}
-                    <input type="checkbox" class="custom-checkbox" name="favori" disabled="True" {% if datadisplay.kid in user_favorites %}checked{% endif %}>
                     <input type="hidden" name="favori_id" value="{{datadisplay.kid}}">
                     <input type="hidden" name="word" value="{{datadisplay.diger}},{{datadisplay.diger2}},{{datadisplay.koku}}{{datadisplay.kelime}}">
                     <input type="hidden" name="meaning" value="{{datadisplay.isim}}">
-                    <button type="submit">Add to Favorites</button>
+                    <button type="button" onclick="addFavorite()">Add to Favorites</button>
                 </form>
+                
+                <script>
+                function addFavorite() {
+                    var formData = $('#favoriForm').serialize();
+                    $.ajax({
+                        type: 'POST',
+                        url: "{% url 'lugat' %}",
+                        data: formData,
+                        success: function(response) {
+                            alert('Favori başarıyla eklendi!');
+                            // İşlem başarılı olduğunda gerekirse ekstra işlemler yapılabilir
+                        },
+                        error: function(xhr, status, error) {
+                            alert('Bir hata oluştu, lütfen tekrar deneyin.');
+                        }
+                    });
+                }
+                </script>
             </td>
             <td> 
                 {{datadisplay.diger}} 
