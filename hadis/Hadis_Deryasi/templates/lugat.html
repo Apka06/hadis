@@ -31,15 +31,15 @@
         {% for datadisplay in Sqlserverconn %}
         <tr>
             <td>
-                <form id="favoriForm">
-                    {% csrf_token %}
-                    <input type="hidden" name="favori_id" value="{{datadisplay.kid}}">
-                    <input type="hidden" name="word" value="{{datadisplay.diger}},{{datadisplay.diger2}},{{datadisplay.koku}}{{datadisplay.kelime}}">
-                    <input type="hidden" name="meaning" value="{{datadisplay.isim}}">
-                    <button type="button" onclick="addFavorite()">Add to Favorites</button>
-                </form>
+                    {% if datadisplay.kid in user_favorites %}
+                <input type="checkbox" class="custom-checkbox" name="favori" disabled="True" checked>
+                <button class="add-to-favorites" data-kid="{{ datadisplay.kid }}" data-word="{{ datadisplay.diger }},{{ datadisplay.diger2 }},{{ datadisplay.koku }}{{ datadisplay.kelime }}" data-meaning="{{ datadisplay.isim }}" disabled>Add to Favorites</button>
+            {% else %}
+                <input type="checkbox" class="custom-checkbox" name="favori" disabled="True">
+                <button class="add-to-favorites" data-kid="{{ datadisplay.kid }}" data-word="{{ datadisplay.diger }},{{ datadisplay.diger2 }},{{ datadisplay.koku }}{{ datadisplay.kelime }}" data-meaning="{{ datadisplay.isim }}">Add to Favorites</button>
+            {% endif %}
                 
-                <script>
+                <!-- <script>
                 function addFavorite() {
                     var formData = $('#favoriForm').serialize();
                     $.ajax({
@@ -55,7 +55,7 @@
                         }
                     });
                 }
-                </script>
+                </script> -->
             </td>
             <td> 
                 {{datadisplay.diger}} 
@@ -78,5 +78,37 @@
             <td> {{datadisplay.isim}}</td>
         </tr>
         {% endfor %}
+        <script>
+            document.querySelectorAll('.add-to-favorites').forEach(button => {
+                button.addEventListener('click', function(event) {
+                    event.preventDefault(); // Prevent default form submission
+                    
+                    const kid = this.getAttribute('data-kid');
+                    const word = this.getAttribute('data-word');
+                    const meaning = this.getAttribute('data-meaning');
+        
+                    fetch('{% url "lugat" %}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: `favori_id=${kid}&word=${encodeURIComponent(word)}&meaning=${encodeURIComponent(meaning)}`
+                    }).then(response => {
+                        if (response.ok) {
+                            // Update UI to indicate success
+                            button.innerText = 'Added';
+                            button.disabled = true;
+                        } else {
+                            // Handle error
+                            console.error('Failed to add to favorites');
+                        }
+                    }).catch(error => {
+                        // Handle network error
+                        console.error('Network error:', error);
+                    });
+                });
+            });
+        </script>
     </table>
 </body>
