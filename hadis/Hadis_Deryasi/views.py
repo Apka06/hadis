@@ -77,10 +77,14 @@ class SqlServerConnView(View):
         user_favorites = FavoritesWord.objects.filter(owner=request.user)
         number_list = [favorite.number for favorite in user_favorites]
 
+        with open("Hadis_Deryasi/database.txt", "r") as file:
+            database = file.readline()
+            print(database)
+
         query = request.GET.get('query')
 
         conn = pyodbc.connect('Driver={sql server};'
-                              'Server=LAPTOP-R60FAUB3\SQLEXPRESS;'
+                              f'Server={database};'
                               'Database=LugatDB;'
                               'Trusted_connection=yes')
         cursor = conn.cursor()
