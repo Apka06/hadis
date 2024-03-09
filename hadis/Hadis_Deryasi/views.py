@@ -91,7 +91,6 @@ class SqlServerConnView(View):
 
         result = None
 
-
         if query:
             length = len(str(query))
             
