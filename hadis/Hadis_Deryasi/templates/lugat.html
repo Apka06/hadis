@@ -31,11 +31,9 @@
         {% for datadisplay in Sqlserverconn %}
         <tr>
             <td>
-                    {% if datadisplay.kid in user_favorites %}
-                <input type="checkbox" class="custom-checkbox" name="favori" disabled="True" checked>
-                <button class="add-to-favorites" data-kid="{{ datadisplay.kid }}" data-word="{{ datadisplay.diger }},{{ datadisplay.diger2 }},{{ datadisplay.koku }}{{ datadisplay.kelime }}" data-meaning="{{ datadisplay.isim }}" disabled>Add to Favorites</button>
+                {% if datadisplay.kid in user_favorites %}
+                <button class="add-to-favorites" data-kid="{{ datadisplay.kid }}" data-word="{{ datadisplay.diger }},{{ datadisplay.diger2 }},{{ datadisplay.koku }}{{ datadisplay.kelime }}" data-meaning="{{ datadisplay.isim }}" disabled>Added</button>
             {% else %}
-                <input type="checkbox" class="custom-checkbox" name="favori" disabled="True">
                 <button class="add-to-favorites" data-kid="{{ datadisplay.kid }}" data-word="{{ datadisplay.diger }},{{ datadisplay.diger2 }},{{ datadisplay.koku }}{{ datadisplay.kelime }}" data-meaning="{{ datadisplay.isim }}">Add to Favorites</button>
             {% endif %}
                 

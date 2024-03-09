@@ -37,7 +37,7 @@
         <h2>Arama Sonuçları</h2>
         <ul>
         {% for result in search_result %}
-            <li align = "right">{{ result }}</li>
+            <li align = "right">{{ result|linebreaks }}</li>
             <br>
         {% endfor %}
         </ul>

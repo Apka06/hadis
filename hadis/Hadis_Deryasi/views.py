@@ -52,8 +52,13 @@ class HadisDeryasiView(View):
             with open(f'texts/hadis/{hadis_file}.txt', 'r', encoding="utf-8") as file:
                 paragraphs = file.read().split(self.seperator[hadis_file])  # Hadisleri kitabın kendi ayıracına göre ayırır.
             result = []
+            x = 1
             for paragraph in paragraphs:
-                if (query in paragraph) or (query in self.remove_diacritics(paragraph)): 
+                if (query in paragraph) or (query in self.remove_diacritics(paragraph)):
+                    x -= 1
+                    paragraph = paragraph.replace(self.underscore, "")
+                    if x >= 0:
+                        print(paragraph, "AAAAAAAA")
                     result.append(paragraph)
            # Bulunan paragrafı ekrana 
             print(len(result))
