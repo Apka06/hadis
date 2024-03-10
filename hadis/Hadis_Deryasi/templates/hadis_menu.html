@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search Page</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
     <a href="{% url 'home' %}"> Anasayfa</a>
@@ -29,7 +30,7 @@
         </select>
         {% if selected_hadis and kelime %}
             <h3>Arama Yapılan Kitap: {{ selected_hadis }}</h3>
-            <h3>Arama Yapılan Kitap: {{ kelime }}</h3>
+            <h3>Aranan Kelime: {{ kelime }}</h3>
         {% endif %}
     </form>
     <!-- Arama sonuçlarını gösterme kısmı -->
@@ -37,10 +38,49 @@
         <h2>Arama Sonuçları</h2>
         <ul>
         {% for result in search_result %}
-            <li align = "right">{{ result|linebreaks }}</li>
+            <li align = "right">
+                <p align="left">
+                    <button id="check-data-btn"  class="add-to-favorites" data-content="{{result}}" data-book="{{selected_hadis}}">Add To Favorites</button>
+                </p>
+                {{ result|linebreaks }}
+            </li>
             <br>
         {% endfor %}
         </ul>
     {% endif %}
+    <script>
+        document.querySelectorAll('.add-to-favorites').forEach(button => {
+            button.addEventListener('click', function(event) {
+                event.preventDefault(); // Prevent default form submission
+
+                const content = this.getAttribute('data-content');
+                const book = this.getAttribute('data-book');
+
+                fetch('{% url "hadis_deryasi" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: `content=${encodeURIComponent(content)}&book=${encodeURIComponent(book)}`
+                }).then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error('Network response was not ok');
+                    }
+                }).then(data => {
+                    if (data.exists) {
+                        alert('Bu hadisi zaten favorilere eklemiştiniz!');
+                    } else {
+                        button.innerText = 'Added';
+                        button.disabled = true;
+                    }
+                }).catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+        });
+    </script>
 </body>
 </html>

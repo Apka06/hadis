@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from django.views.generic import ListView, View
-from .models import Home, FavoritesWord
+from .models import Home, FavoritesWord, FavoritesHadis
 from django.shortcuts import redirect
+from django.http import JsonResponse
 import pyodbc
 import re
 import langdetect
@@ -45,43 +46,49 @@ class HadisDeryasiView(View):
         query = request.GET.get('query')
         hadis = request.GET.get('hadis')
         hadis_file = str(hadis)
-        print(hadis_file)
         
         if query:
             #query = self.remove_diacritics(query) //harekeli aramayı harekesizleştirir.
             with open(f'texts/hadis/{hadis_file}.txt', 'r', encoding="utf-8") as file:
                 paragraphs = file.read().split(self.seperator[hadis_file])  # Hadisleri kitabın kendi ayıracına göre ayırır.
             result = []
-            x = 1
             for paragraph in paragraphs:
                 if (query in paragraph) or (query in self.remove_diacritics(paragraph)):
-                    x -= 1
                     paragraph = paragraph.replace(self.underscore, "")
-                    if x >= 0:
-                        print(paragraph, "AAAAAAAA")
                     result.append(paragraph)
-           # Bulunan paragrafı ekrana 
-            print(len(result))
             return render(request, 'hadis_menu.html', {'kelime': query, "search_result": result, 'selected_hadis': hadis,})
         else:
             return render(request, 'hadis_menu.html', {"search_result": [],})
+    
+    def post(self, request):
+
+        favori_content = request.POST.get('content')
+        favori_book = request.POST.get('book')
+
+        if not FavoritesHadis.objects.filter(content=favori_content, book=favori_book, owner=request.user).exists():
+            FavoritesHadis.objects.create(
+                number=1,  
+                content=''.join(str(favori_content)),      
+                book=str(favori_book),   
+                owner=request.user
+            )
+            return JsonResponse({'exists': False})
+        else:
+            return JsonResponse({'exists': True})
     
     
 class SqlServerConnView(View):
     
     def is_arabic(self, text):
         return (langdetect.detect(text) == "ar")
+    
+    def connect_database(self, query):
 
-    def get(self, request):
-
-        user_favorites = FavoritesWord.objects.filter(owner=request.user)
-        number_list = [favorite.number for favorite in user_favorites]
+        print("database")
 
         with open("Hadis_Deryasi/database.txt", "r") as file:
             database = file.readline()
             print(database)
-
-        query = request.GET.get('query')
 
         conn = pyodbc.connect('Driver={sql server};'
                               f'Server={database};'
@@ -89,37 +96,53 @@ class SqlServerConnView(View):
                               'Trusted_connection=yes')
         cursor = conn.cursor()
 
+        length = len(str(query))
+        
+        if not self.is_arabic(query):
+            if length == 1:
+                cursor.execute("select kid,onay,diger,isim,diger2,koku,kelime from osmanlica where isim like '" + str(query) + "%'")
+            else:
+                cursor.execute("select kid,onay,diger,isim,diger2,koku,kelime from osmanlica where isim like '%" + query + "%'")
+
+        else:
+            if length == 1:
+                cursor.execute("select kid,onay,diger,isim,diger2,koku,kelime from osmanlica where koku like N'" + str(query) 
+                            + "%' or diger like N'" + str(query) 
+                            + "%' or diger2 like N'" + str(query) 
+                            + "%' or kelime like N'" + str(query) + "%'")
+            else:
+                cursor.execute("select kid,onay,diger,isim,diger2,koku,kelime from osmanlica where diger like N'%" + query
+                            + "%' or diger2 like N'%" + query
+                            + "%' or koku like N'%" + query
+                            + "%' or kelime like N'%" + query + "%'")
+        result = cursor.fetchall()
+
+        print(len(result))
+
+        return result
+        
+    def get(self, request):
+        print("get")
+
         result = None
 
-        if query:
-            length = len(str(query))
-            
-            if not self.is_arabic(query):
-                if length == 1:
-                    cursor.execute("select kid,onay,diger,isim,diger2,koku,kelime from osmanlica where isim like '" + str(query) + "%'")
-                else:
-                    cursor.execute("select kid,onay,diger,isim,diger2,koku,kelime from osmanlica where isim like '%" + query + "%'")
+        user_favorites = FavoritesWord.objects.filter(owner=request.user)
 
-            else:
-                if length == 1:
-                    cursor.execute("select kid,onay,diger,isim,diger2,koku,kelime from osmanlica where koku like N'" + str(query) 
-                                + "%' or diger like N'" + str(query) 
-                                + "%' or diger2 like N'" + str(query) 
-                                + "%' or kelime like N'" + str(query) + "%'")
-                else:
-                    cursor.execute("select kid,onay,diger,isim,diger2,koku,kelime from osmanlica where diger like N'%" + query
-                                + "%' or diger2 like N'%" + query
-                                + "%' or koku like N'%" + query
-                                + "%' or kelime like N'%" + query + "%'")
-            result = cursor.fetchall()
-            print(len(result))
+        number_list = [favorite.number for favorite in user_favorites]
+
+        query = request.GET.get('query')
+        
+        if query:
+            print("query: ",query)
+            result = self.connect_database(query=query)
+            query = None
         
         return render(request, 'lugat.html', {'Sqlserverconn': result, 'user_favorites':number_list})
 
     def post(self, request):
 
         favori_id = request.POST.get('favori_id')
-        if not FavoritesWord.objects.filter(id=favori_id, owner=request.user).exists():
+        if not FavoritesWord.objects.filter(number=favori_id, owner=request.user).exists():
             word = str(request.POST.get('word'))
             meaning = str(request.POST.get('meaning'))
             FavoritesWord.objects.create(
@@ -128,4 +151,7 @@ class SqlServerConnView(View):
                 meaning=meaning,   
                 owner=request.user
             )
+        else:
+            favorite = FavoritesWord.objects.get(number=favori_id)
+            favorite.delete()
         return redirect(request.META.get('HTTP_REFERER', '/'))

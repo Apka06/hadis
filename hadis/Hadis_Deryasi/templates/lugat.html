@@ -16,7 +16,7 @@
     <a href="{% url 'home' %}"> Anasayfa</a>
     <h1>Lugat</h1>
     <form action="{% url 'lugat' %}" method="GET"> 
-        <input type="text" name="query" placeholder="Aramak istediğiniz kelimeyi girin">
+        <input type="text" id="arama" name="query" placeholder="Aramak istediğiniz kelimeyi girin">
         <button type="submit">Ara</button>
     </form>
     <br>
@@ -31,10 +31,12 @@
         {% for datadisplay in Sqlserverconn %}
         <tr>
             <td>
-                {% if datadisplay.kid in user_favorites %}
-                <button class="add-to-favorites" data-kid="{{ datadisplay.kid }}" data-word="{{ datadisplay.diger }},{{ datadisplay.diger2 }},{{ datadisplay.koku }}{{ datadisplay.kelime }}" data-meaning="{{ datadisplay.isim }}" disabled>Added</button>
+            {% if datadisplay.kid in user_favorites %}
+                <button class="add-to-favorites" data-kid="{{ datadisplay.kid }}" data-word="{{ datadisplay.diger }},{{ datadisplay.diger2 }},{{ datadisplay.koku }}{{ datadisplay.kelime }}" data-meaning="{{ datadisplay.isim }}" hidden>Add to Favorites</button>
+                <button class="remove-from-favorites" data-kid="{{ datadisplay.kid }}" data-word="{{ datadisplay.diger }},{{ datadisplay.diger2 }},{{ datadisplay.koku }}{{ datadisplay.kelime }}" data-meaning="{{ datadisplay.isim }}">Favorilerden sil</button>
             {% else %}
                 <button class="add-to-favorites" data-kid="{{ datadisplay.kid }}" data-word="{{ datadisplay.diger }},{{ datadisplay.diger2 }},{{ datadisplay.koku }}{{ datadisplay.kelime }}" data-meaning="{{ datadisplay.isim }}">Add to Favorites</button>
+                <button class="remove-from-favorites" data-kid="{{ datadisplay.kid }}" data-word="{{ datadisplay.diger }},{{ datadisplay.diger2 }},{{ datadisplay.koku }}{{ datadisplay.kelime }}" data-meaning="{{ datadisplay.isim }}" hidden>Favorilerden sil</button>
             {% endif %}
                 
             </td>
@@ -63,6 +65,38 @@
             document.querySelectorAll('.add-to-favorites').forEach(button => {
                 button.addEventListener('click', function(event) {
                     event.preventDefault(); // Prevent default form submission
+
+                    const kid = this.getAttribute('data-kid');
+                    const word = this.getAttribute('data-word');
+                    const meaning = this.getAttribute('data-meaning');
+        
+                    fetch('{% url "lugat" %}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: `favori_id=${kid}&word=${encodeURIComponent(word)}&meaning=${encodeURIComponent(meaning)}`
+                    }).then(response => {
+                        if (response.ok ) {
+                            // Update UI to indicate success
+
+                        } else {
+                            // Handle error
+                            alert('Failed to add to favorites');
+                        }
+                    }).catch(error => {
+                        // Handle network error
+                        console.error('Network error:', error);
+                    });
+                    const deleteButton = this.nextElementSibling; // Silme düğmesi, favori ekleme düğmesinin bir sonraki kardeşidir
+                    deleteButton.removeAttribute('hidden');
+                    button.hidden = true;
+                });
+            });
+            document.querySelectorAll('.remove-from-favorites').forEach(button => {
+                button.addEventListener('click', function(event) {
+                    event.preventDefault(); // Prevent default form submission
                     
                     const kid = this.getAttribute('data-kid');
                     const word = this.getAttribute('data-word');
@@ -76,18 +110,20 @@
                         },
                         body: `favori_id=${kid}&word=${encodeURIComponent(word)}&meaning=${encodeURIComponent(meaning)}`
                     }).then(response => {
-                        if (response.ok) {
+                        if (response.ok ) {
                             // Update UI to indicate success
-                            button.innerText = 'Added';
-                            button.disabled = true;
+
                         } else {
                             // Handle error
-                            console.error('Failed to add to favorites');
+                            alert('Failed to add to favorites');
                         }
                     }).catch(error => {
                         // Handle network error
                         console.error('Network error:', error);
                     });
+                    const deleteButton = this.previousElementSibling; // Silme düğmesi, favori ekleme düğmesinin bir sonraki kardeşidir
+                    deleteButton.removeAttribute('hidden');
+                    button.hidden = true;
                 });
             });
         </script>
