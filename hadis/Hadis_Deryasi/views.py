@@ -41,7 +41,7 @@ class HadisDeryasiView(View):
 
         return cleaned_text
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request):
 
         query = request.GET.get('query')
         hadis = request.GET.get('hadis')
@@ -123,35 +123,40 @@ class SqlServerConnView(View):
         
     def get(self, request):
         print("get")
-
-        result = None
-
-        user_favorites = FavoritesWord.objects.filter(owner=request.user)
-
-        number_list = [favorite.number for favorite in user_favorites]
-
-        query = request.GET.get('query')
         
+        return render(request, 'lugat.html')
+
+    def post(self, request):
+        
+        print("post", request.POST)
+
+        query = request.POST.get('query')
+
         if query:
+            result = None
+
+            user_favorites = FavoritesWord.objects.filter(owner=request.user)
+
+            number_list = [favorite.number for favorite in user_favorites]
+            
             print("query: ",query)
             result = self.connect_database(query=query)
             query = None
-        
-        return render(request, 'lugat.html', {'Sqlserverconn': result, 'user_favorites':number_list})
+            
+            return render(request, 'lugat.html', {'Sqlserverconn': result, 'user_favorites':number_list})
 
-    def post(self, request):
-
-        favori_id = request.POST.get('favori_id')
-        if not FavoritesWord.objects.filter(number=favori_id, owner=request.user).exists():
-            word = str(request.POST.get('word'))
-            meaning = str(request.POST.get('meaning'))
-            FavoritesWord.objects.create(
-                number=favori_id,  
-                word=''.join(word),      
-                meaning=meaning,   
-                owner=request.user
-            )
-        else:
-            favorite = FavoritesWord.objects.get(number=favori_id)
-            favorite.delete()
-        return redirect(request.META.get('HTTP_REFERER', '/'))
+        else:    
+            favori_id = request.POST.get('favori_id')
+            if not FavoritesWord.objects.filter(number=favori_id, owner=request.user).exists():
+                word = str(request.POST.get('word'))
+                meaning = str(request.POST.get('meaning'))
+                FavoritesWord.objects.create(
+                    number=favori_id,  
+                    word=''.join(word),      
+                    meaning=meaning,   
+                    owner=request.user
+                )
+            else:
+                favorite = FavoritesWord.objects.get(number=favori_id)
+                favorite.delete()
+            return redirect(request.META.get('HTTP_REFERER', '/'))

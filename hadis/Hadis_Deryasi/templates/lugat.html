@@ -15,9 +15,10 @@
 <body>
     <a href="{% url 'home' %}"> Anasayfa</a>
     <h1>Lugat</h1>
-    <form action="{% url 'lugat' %}" method="GET"> 
+    <form action="{% url 'lugat' %}" method="post">
+        {% csrf_token %}
         <input type="text" id="arama" name="query" placeholder="Aramak istediğiniz kelimeyi girin">
-        <button type="submit">Ara</button>
+        <button name="search" type="submit">Ara</button>
     </form>
     <br>
     <table border="1">
@@ -80,7 +81,9 @@
                     }).then(response => {
                         if (response.ok ) {
                             // Update UI to indicate success
-
+                            const deleteButton = this.nextElementSibling; // Silme düğmesi, favori ekleme düğmesinin bir sonraki kardeşidir
+                    deleteButton.removeAttribute('hidden');
+                    button.hidden = true;
                         } else {
                             // Handle error
                             alert('Failed to add to favorites');
@@ -89,9 +92,7 @@
                         // Handle network error
                         console.error('Network error:', error);
                     });
-                    const deleteButton = this.nextElementSibling; // Silme düğmesi, favori ekleme düğmesinin bir sonraki kardeşidir
-                    deleteButton.removeAttribute('hidden');
-                    button.hidden = true;
+                    
                 });
             });
             document.querySelectorAll('.remove-from-favorites').forEach(button => {
@@ -112,7 +113,9 @@
                     }).then(response => {
                         if (response.ok ) {
                             // Update UI to indicate success
-
+                            const deleteButton = this.previousElementSibling; // Silme düğmesi, favori ekleme düğmesinin bir sonraki kardeşidir
+                    deleteButton.removeAttribute('hidden');
+                    button.hidden = true;
                         } else {
                             // Handle error
                             alert('Failed to add to favorites');
@@ -121,9 +124,7 @@
                         // Handle network error
                         console.error('Network error:', error);
                     });
-                    const deleteButton = this.previousElementSibling; // Silme düğmesi, favori ekleme düğmesinin bir sonraki kardeşidir
-                    deleteButton.removeAttribute('hidden');
-                    button.hidden = true;
+                    
                 });
             });
         </script>
