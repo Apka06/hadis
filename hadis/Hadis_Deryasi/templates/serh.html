@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Page</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <a href="{% url 'home' %}"> Anasayfa</a>
+    <h1>Şerhler</h1>
+    <form action="{% url 'serh' %}" method="GET"> {% csrf_token %}
+        <input type="text" name="query" placeholder="Aramak istediğiniz kelimeyi girin">
+        <button type="submit">Ara</button>
+        <br>
+        <label>Şerhinde aranacak kitap seç:</label>
+        <select name="serh" id="serh">
+            <option value="buhari">Buhari</option>
+            <option value="muslim">Muslim</option>
+            <option value="nesai">Nesai</option>
+            <option value="ebudavud">Ebudavud</option>
+            <option value="ibnmace">İbnmace</option>
+            <option value="tirmizi">Tirmizi</option>
+            <option value="ibnhibban">İbnhibban</option>
+            <option value="muvattamhmd">Muvatta Muhammed</option>
+            <option value="muvattamusab">Muvatta Mus'ab</option>
+            <option value="musnedahmed">Müsned Ahmed</option>
+
+
+        </select>
+        {% if selected_serh and kelime %}
+            <h3>Şerhinde Aranan Kitap: {{ selected_serh }}</h3>
+            <h3>Aranan Kelime: {{ kelime }}</h3>
+        {% endif %}
+    </form>
+    <!-- Arama sonuçlarını gösterme kısmı -->
+    {% if search_result %}
+        <h2>Arama Sonuçları</h2>
+        <ul>
+        {% for result in search_result %}
+            <li align = "right">
+                <p align="left">
+                    <button id="check-data-btn"  class="add-to-favorites" data-content="{{result}}" data-book="{{selected_serh}}">Add To Favorites</button>
+                </p>
+                {{ result|linebreaks }}
+            </li>
+            <br>
+        {% endfor %}
+        </ul>
+    {% endif %}
+    <script>
+        document.querySelectorAll('.add-to-favorites').forEach(button => {
+            button.addEventListener('click', function(event) {
+                event.preventDefault(); // Prevent default form submission
+
+                const content = this.getAttribute('data-content');
+                const book = this.getAttribute('data-book');
+
+                fetch('{% url "serh" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: `content=${encodeURIComponent(content)}&book=${encodeURIComponent(book)}`
+                }).then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error('Network response was not ok');
+                    }
+                }).then(data => {
+                    if (data.exists) {
+                        alert('Bu serhi zaten favorilere eklemiştiniz!');
+                    } else {
+                        button.innerText = 'Added';
+                        button.disabled = true;
+                    }
+                }).catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

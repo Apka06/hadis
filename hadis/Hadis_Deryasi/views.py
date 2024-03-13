@@ -6,6 +6,8 @@ from django.http import JsonResponse
 import pyodbc
 import re
 import langdetect
+import os
+import glob
 
 def home(request):
     return render(request,'home.html',{})
@@ -50,6 +52,7 @@ class HadisDeryasiView(View):
         if query:
             #query = self.remove_diacritics(query) //harekeli aramayı harekesizleştirir.
             with open(f'texts/hadis/{hadis_file}.txt', 'r', encoding="utf-8") as file:
+                print("texte baktım")
                 paragraphs = file.read().split(self.seperator[hadis_file])  # Hadisleri kitabın kendi ayıracına göre ayırır.
             result = []
             for paragraph in paragraphs:
@@ -76,7 +79,45 @@ class HadisDeryasiView(View):
         else:
             return JsonResponse({'exists': True})
     
-    
+
+class SerhView(View):
+
+    def __init__(self) -> None:
+
+        self.pattern = r'(\(\d+/\d+\))'
+        self.main_dir = "texts/serh/"
+
+
+    def get(self, request):
+        
+        query = request.GET.get("query")
+        serh = request.GET.get("serh")
+        serh_file = str(serh)
+        dirs = glob.glob(os.path.join(f"{self.main_dir}s{serh_file}", '*.txt'))
+        
+        if query:
+            result = []
+            for dir in dirs: 
+                print(dir)      
+                #query = self.remove_diacritics(query) //harekeli aramayı harekesizleştirir.
+                with open(dir.replace("\\","/"), 'r', encoding="utf-8") as file:
+                    print("serhe baktım")
+                    text = file.read()
+                    new_text = re.sub(self.pattern, '\\1[cut]',  text)
+                    pages = re.split('[cut]', new_text)
+                    for page in pages:
+                        if query in page:
+                            book = dir.replace("\\","/").replace(f"texts/serh/s{serh}","").replace("/serh","")
+                            result.append(page + f"\n-{book[:-4]}-")
+
+            return render(request, 'serh.html', {'kelime': query, "search_result": result, 'selected_serh': serh})
+        else:
+            return render(request, 'serh.html', {"search_result": [],})
+
+    def post(self, request):
+        pass
+
+
 class SqlServerConnView(View):
     
     def is_arabic(self, text):
