@@ -97,25 +97,39 @@ class SerhView(View):
         
         if query:
             result = []
+            books = []
             for dir in dirs: 
-                print(dir)      
                 #query = self.remove_diacritics(query) //harekeli aramayı harekesizleştirir.
                 with open(dir.replace("\\","/"), 'r', encoding="utf-8") as file:
-                    print("serhe baktım")
                     text = file.read()
                     new_text = re.sub(self.pattern, '\\1[cut]',  text)
                     pages = re.split('[cut]', new_text)
                     for page in pages:
                         if query in page:
-                            book = dir.replace("\\","/").replace(f"texts/serh/s{serh}","").replace("/serh","")
-                            result.append(page + f"\n-{book[:-4]}-")
+                            book_file = dir.replace("\\","/").replace(f"texts/serh/s{serh}","").replace("/serh","")
+                            book = book_file[:-4]
+                            books.append(book)
+                            result.append(page)
 
-            return render(request, 'serh.html', {'kelime': query, "search_result": result, 'selected_serh': serh})
+            return render(request, 'serh.html', {'kelime': query, "search_result": zip(result, books), 'selected_serh': serh,})
         else:
             return render(request, 'serh.html', {"search_result": [],})
 
     def post(self, request):
-        pass
+        
+        favori_content = request.POST.get('content')
+        favori_book = request.POST.get('source')
+
+        if not FavoritesHadis.objects.filter(content=favori_content, book=favori_book, owner=request.user).exists():
+            FavoritesHadis.objects.create(
+                number=1,
+                content=''.join(str(favori_content)),      
+                book=str(favori_book),   
+                owner=request.user
+            )
+            return JsonResponse({'exists': False})
+        else:
+            return JsonResponse({'exists': True})
 
 
 class SqlServerConnView(View):

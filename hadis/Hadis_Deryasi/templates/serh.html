@@ -37,12 +37,13 @@
     {% if search_result %}
         <h2>Arama Sonuçları</h2>
         <ul>
-        {% for result in search_result %}
+        {% for result, book in search_result %}
             <li align = "right">
                 <p align="left">
-                    <button id="check-data-btn"  class="add-to-favorites" data-content="{{result}}" data-book="{{selected_serh}}">Add To Favorites</button>
+                    <button id="check-data-btn"  class="add-to-favorites" data-content="{{result}}" data-book="{{selected_serh}}" data-source="{{book}}">Add To Favorites</button>
                 </p>
                 {{ result|linebreaks }}
+                {{ book }}
             </li>
             <br>
         {% endfor %}
@@ -55,6 +56,7 @@
 
                 const content = this.getAttribute('data-content');
                 const book = this.getAttribute('data-book');
+                const source = this.getAttribute('data-source')
 
                 fetch('{% url "serh" %}', {
                     method: 'POST',
@@ -62,7 +64,7 @@
                         'Content-Type': 'application/x-www-form-urlencoded',
                         'X-CSRFToken': '{{ csrf_token }}'
                     },
-                    body: `content=${encodeURIComponent(content)}&book=${encodeURIComponent(book)}`
+                    body: `content=${encodeURIComponent(content)}&book=${encodeURIComponent(book)}&source=${encodeURIComponent(source)}`
                 }).then(response => {
                     if (response.ok) {
                         return response.json();
