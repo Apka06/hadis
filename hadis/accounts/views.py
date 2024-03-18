@@ -1,10 +1,14 @@
 from django.db.models.base import Model as Model
 from django.views import generic
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect
 from Hadis_Deryasi.models import FavoritesHadis, FavoritesWord
 from Hadis_Deryasi.forms import FavoritesHadisForm, FavoritesWordForm
+from reportlab.pdfgen.canvas import Canvas
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.lib.units import inch
+from reportlab.pdfbase import pdfmetrics
 
 class UserRegisterView(generic.CreateView):
     form_class = UserCreationForm
@@ -32,8 +36,19 @@ class ProfileView(generic.DetailView):
                 favorite =  self.switch[request.POST.get('favorite_type')].objects.get(pk=favorite_id)
                 favorite.delete()
                 return redirect('profile')
-
-# zort
+            elif request.POST['action'] == 'delete_selected':
+                selected_favorites = request.POST.getlist('selected_favorites')
+                for i in selected_favorites:
+                    favorite =  self.switch[request.POST.get('favorite_type')].objects.get(pk=i)
+                    favorite.delete()
+                return redirect('profile')
+            elif request.POST['action'] == 'save_as_pdf':
+                selected_favorites = request.POST.getlist('selected_favorites')
+                for i in selected_favorites:
+                    favorite =  self.switch[request.POST.get('favorite_type')].objects.get(pk=i)
+                    print(favorite.arrange_string())
+                return redirect('profile')
+                
         # form = FavoritesForm(request.POST)
         # if form.is_valid():
         #     number = form.cleaned_data['number']

@@ -12,6 +12,10 @@ class FavoritesHadis(models.Model):
     book = models.CharField(max_length = 255, null=True)
     owner = models.ForeignKey(User, on_delete= models.CASCADE)
 
+    def arrange_text(self):
+        text = str(self.number) + " - " + str(self.content) + "\n-" + str(self.book) + "-\n"
+        return text
+
     def __str__(self) -> str:
         return str(self.owner) + " 's " + str(self.id)
     
@@ -20,6 +24,10 @@ class FavoritesWord(models.Model):
     word = models.CharField(max_length = 255)
     meaning = models.CharField(null = True, max_length = 512)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def arrange_text(self):
+        text = str(self.number) + "\n" + str(self.word) + " : " + str(self.meaning) + "\n"
+        return text
 
     def __str__(self) -> str:
         return str(self.owner) + " 's " + str(self.id)
