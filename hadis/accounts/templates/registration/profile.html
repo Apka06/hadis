@@ -61,6 +61,7 @@
         {% else %}
         <p>Herhangi bir favoriniz yok!</p>
         {% endif %}
+
     </ul>
     <script>
         // Select all checkbox
@@ -73,35 +74,39 @@
         // Item checkboxes
         
         // Add event listener to select all checkbox
-        selectAllHadisCheckbox.addEventListener('change', function() {
-            if (selectAllHadisCheckbox.checked == true) {
-                this.checked = true;
-                    for (var i = 0; i < HadisCheckboxes.length; i++) {
-                    HadisCheckboxes[i].checked = true;
+        if (selectAllHadisCheckbox) {
+            selectAllHadisCheckbox.addEventListener('change', function() {
+                if (selectAllHadisCheckbox.checked == true) {
+                    this.checked = true;
+                        for (var i = 0; i < HadisCheckboxes.length; i++) {
+                        HadisCheckboxes[i].checked = true;
+                    }
                 }
-            }
-            else{
-                this.checked = false;
-                    for (var i = 0; i < HadisCheckboxes.length; i++) {
-                    HadisCheckboxes[i].checked = false;
+                else{
+                    this.checked = false;
+                        for (var i = 0; i < HadisCheckboxes.length; i++) {
+                        HadisCheckboxes[i].checked = false;
+                    }
                 }
-            }
-        });
-        selectAllKelimeCheckbox.addEventListener('change', function() {
-            if (selectAllKelimeCheckbox.checked == true) {
-                this.checked = true;
-                for (var i = 0; i < KelimeCheckboxes.length; i++) {
-                    KelimeCheckboxes[i].checked = true;
-            }
-            }
-            else{
-                this.checked = false;
-                for (var i = 0; i < KelimeCheckboxes.length; i++) {
-                    KelimeCheckboxes[i].checked = false;
-            }
-            }
-        });
-
+            });
+        }
+        
+        if (selectAllKelimeCheckbox) {
+            selectAllKelimeCheckbox.addEventListener('change', function() {
+                if (selectAllKelimeCheckbox.checked == true) {
+                    this.checked = true;
+                    for (var i = 0; i < KelimeCheckboxes.length; i++) {
+                        KelimeCheckboxes[i].checked = true;
+                }
+                }
+                else{
+                    this.checked = false;
+                    for (var i = 0; i < KelimeCheckboxes.length; i++) {
+                        KelimeCheckboxes[i].checked = false;
+                }
+                }
+            });
+        }
 
         document.getElementById('save_kelime').addEventListener('click', function() {
             window.print();
