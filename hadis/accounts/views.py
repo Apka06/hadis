@@ -4,11 +4,6 @@ from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect
 from Hadis_Deryasi.models import FavoritesHadis, FavoritesWord
-from Hadis_Deryasi.forms import FavoritesHadisForm, FavoritesWordForm
-from reportlab.pdfgen.canvas import Canvas
-from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.lib.units import inch
-from reportlab.pdfbase import pdfmetrics
 
 class UserRegisterView(generic.CreateView):
     form_class = UserCreationForm
@@ -22,11 +17,6 @@ class ProfileView(generic.DetailView):
     def get(self, request):
         favorites_hadis = FavoritesHadis.objects.filter(owner=request.user)
         favorites_kelime = FavoritesWord.objects.filter(owner=request.user)
-
-        form_hadis = FavoritesHadisForm()
-        form_kelime = FavoritesWordForm()
-
-
         return render(request, 'registration/profile.html', {'favorites_hadis': favorites_hadis, 'favorites_kelime': favorites_kelime,})
 
     def post(self, request):
@@ -42,23 +32,4 @@ class ProfileView(generic.DetailView):
                     favorite =  self.switch[request.POST.get('favorite_type')].objects.get(pk=i)
                     favorite.delete()
                 return redirect('profile')
-            elif request.POST['action'] == 'save_as_pdf':
-                selected_favorites = request.POST.getlist('selected_favorites')
-                for i in selected_favorites:
-                    favorite =  self.switch[request.POST.get('favorite_type')].objects.get(pk=i)
-                    print(favorite.arrange_string())
-                return redirect('profile')
-                
-        # form = FavoritesForm(request.POST)
-        # if form.is_valid():
-        #     number = form.cleaned_data['number']
-        #     content = form.cleaned_data['content']
-        #     FavoritesHadis.objects.create(number=number, content=content, owner=request.user)
-        #     return redirect('profile')
-        # else:
-        #     # Eğer form geçersizse, hata mesajlarını göstermek için kullanabilirsiniz
-        #     favorites = FavoritesHadis.objects.filter(owner=request.user)
-        #     return render(request, 'registration/profile.html', {'favorites': favorites, 'form': form})
-
-        # Favori düzenleme veya silme işlemleri
         

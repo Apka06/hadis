@@ -1,96 +1,113 @@
+<!DOCTYPE html>
+<html lang='en'>
+    
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    
+</head>
+
 <body>
     
 
-<p>
-    <a href="{% url 'home' %}"> Home </a>
-</p>
-<h1>Profil</h1>
-<h2>Favori Hadisler</h2>
-
-<ul>
-    {% if favorites_kelime %}
-    <form action="{% url 'profile' %}" method="post">
-        <input type="checkbox" id="selectAllHadis">Hepsini Seç
-        <br>
-        
-        {% for favorite in favorites_hadis %}
-            <li>
-                {{ favorite.number }} - {{ favorite.content }}: {{favorite.book}} 
-                    {% csrf_token %}
-                    <input type="hidden" name="favorite_id" value="{{ favorite.id }}">
-                    <input type="hidden" name="favorite_type" value="hadis">
-                    <input type="checkbox" class="hadis" name="selected_favorites" value="{{ favorite.id }}">
-            </li>
+    <p>
+        <a href="{% url 'home' %}"> Home </a>
+    </p>
+    <h1>Profil</h1>
+    <h2>Favori Hadisler</h2>
+    <ul>
+        {% if favorites_hadis %}
+        <form action="{% url 'profile' %}" method="post">
+            <input type="checkbox" id="selectAllHadis">Hepsini Seç
             <br>
-        {% endfor %}
+            
+            {% for favorite in favorites_hadis %}
+                <li>
+                    {{ favorite.number }} - {{ favorite.content }}: {{favorite.book}} 
+                        {% csrf_token %}
+                        <input type="hidden" name="favorite_id" value="{{ favorite.id }}">
+                        <input type="hidden" name="favorite_type" value="hadis">
+                        <input type="checkbox" class="hadis" name="selected_favorites" value="{{ favorite.id }}">
+                </li>
+                <br>
+            {% endfor %}
+                <button type="submit" name="action" value="delete_selected">Sil</button>
+            </form>
+            <button type="submit" name="action" id="save_hadis">PDF olarak kaydet</button>
+            {% else %}
+            <p>Herhangi bir favoriniz yok!</p>
+            {% endif %}
+    </ul>
+    
+    <h2>Favori Kelimeler</h2>
+    <ul>
+        {% if favorites_kelime %}
+        <form action="{% url 'profile' %}" method="post">
+            <input type="checkbox" id="selectAllKelime">Hepsini Seç
+            <br>
+            {% for favorite in favorites_kelime %}
+                <li>
+                    {{ favorite.number }} - {{ favorite.word }}: {{favorite.meaning}} 
+                        {% csrf_token %}
+                        <input type="hidden" name="favorite_id" value="{{ favorite.id }}">
+                        <input type="hidden" name="favorite_type" value="kelime">
+                        <input type="checkbox" class="kelime" name="selected_favorites" value="{{ favorite.id }}">
+                </li>
+            {% endfor %}
             <button type="submit" name="action" value="delete_selected">Sil</button>
-            <button type="submit" name="action" value="save_as_pdf">PDF olarak kaydet</button>
         </form>
+        <button type="submit" name="action" id="save_kelime">PDF olarak kaydet</button>
         {% else %}
         <p>Herhangi bir favoriniz yok!</p>
         {% endif %}
-</ul>
-
-<h2>Favori Kelimeler</h2>
-<ul>
-    {% if favorites_kelime %}
-    <form action="{% url 'profile' %}" method="post">
-        <input type="checkbox" id="selectAllKelime">Hepsini Seç
-        <br>
-        {% for favorite in favorites_kelime %}
-            <li>
-                {{ favorite.number }} - {{ favorite.word }}: {{favorite.meaning}} 
-                    {% csrf_token %}
-                    <input type="hidden" name="favorite_id" value="{{ favorite.id }}">
-                    <input type="hidden" name="favorite_type" value="kelime">
-                    <input type="checkbox" class="kelime" name="selected_favorites" value="{{ favorite.id }}">
-            </li>
-        {% endfor %}
-        <button type="submit" name="action" value="delete_selected">Sil</button>
-        <button type="submit" name="action" value="save_as_pdf">PDF olarak kaydet</button>
-    </form>
-    {% else %}
-    <p>Herhangi bir favoriniz yok!</p>
-    {% endif %}
-</ul>
-<script>
-    // Select all checkbox
-    var selectAllHadisCheckbox = document.getElementById('selectAllHadis');
-    var HadisCheckboxes = document.getElementsByClassName('hadis')
-    // Item checkboxes
-    var KelimeCheckboxes = document.getElementsByClassName('kelime')
-
-    var selectAllKelimeCheckbox = document.getElementById('selectAllKelime');
-    // Item checkboxes
+    </ul>
+    <script>
+        // Select all checkbox
+        var selectAllHadisCheckbox = document.getElementById('selectAllHadis');
+        var HadisCheckboxes = document.getElementsByClassName('hadis')
+        // Item checkboxes
+        var KelimeCheckboxes = document.getElementsByClassName('kelime')
     
-    // Add event listener to select all checkbox
-    selectAllHadisCheckbox.addEventListener('change', function() {
-        if (selectAllHadisCheckbox.checked == true) {
-            this.checked = true;
-                for (var i = 0; i < HadisCheckboxes.length; i++) {
-                HadisCheckboxes[i].checked = true;
+        var selectAllKelimeCheckbox = document.getElementById('selectAllKelime');
+        // Item checkboxes
+        
+        // Add event listener to select all checkbox
+        selectAllHadisCheckbox.addEventListener('change', function() {
+            if (selectAllHadisCheckbox.checked == true) {
+                this.checked = true;
+                    for (var i = 0; i < HadisCheckboxes.length; i++) {
+                    HadisCheckboxes[i].checked = true;
+                }
             }
-        }
-        else{
-            this.checked = false;
-                for (var i = 0; i < HadisCheckboxes.length; i++) {
-                HadisCheckboxes[i].checked = false;
+            else{
+                this.checked = false;
+                    for (var i = 0; i < HadisCheckboxes.length; i++) {
+                    HadisCheckboxes[i].checked = false;
+                }
             }
-        }
-    });
-    selectAllKelimeCheckbox.addEventListener('change', function() {
-        if (selectAllKelimeCheckbox.checked == true) {
-            this.checked = true;
-            for (var i = 0; i < KelimeCheckboxes.length; i++) {
-                KelimeCheckboxes[i].checked = true;
-        }
-        }
-        else{
-            this.checked = false;
-            for (var i = 0; i < KelimeCheckboxes.length; i++) {
-                KelimeCheckboxes[i].checked = false;
-        }
-        }
-    });
-</script>
-</body>
+        });
+        selectAllKelimeCheckbox.addEventListener('change', function() {
+            if (selectAllKelimeCheckbox.checked == true) {
+                this.checked = true;
+                for (var i = 0; i < KelimeCheckboxes.length; i++) {
+                    KelimeCheckboxes[i].checked = true;
+            }
+            }
+            else{
+                this.checked = false;
+                for (var i = 0; i < KelimeCheckboxes.length; i++) {
+                    KelimeCheckboxes[i].checked = false;
+            }
+            }
+        });
+
+
+        document.getElementById('save_kelime').addEventListener('click', function() {
+            window.print();
+        });
+    </script>
+    </body>
+
+</html>
+
