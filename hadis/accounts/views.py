@@ -33,3 +33,12 @@ class ProfileView(generic.DetailView):
                     favorite.delete()
                 return redirect('profile')
         
+class FavoritePrintView(generic.View):
+
+    def get(self, request, favori):
+        if favori == "hadisler":
+            favorites_hadis = FavoritesHadis.objects.filter(owner=request.user)
+            return render(request, 'favorite_hadis.html', {'favorites_hadis': favorites_hadis,})
+        else:
+            favorites_kelime = FavoritesWord.objects.filter(owner=request.user)
+            return render(request, 'favorite_words.html', {'favorites_kelime': favorites_kelime,})

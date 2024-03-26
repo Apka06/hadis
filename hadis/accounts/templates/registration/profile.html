@@ -34,7 +34,9 @@
             {% endfor %}
                 <button type="submit" name="action" value="delete_selected">Sil</button>
             </form>
-            <button type="submit" name="action" id="save_hadis">PDF olarak kaydet</button>
+            <!-- <button type="submit" name="action" id="save_hadis">PDF olarak kaydet</button> -->
+            <a href="{% url 'favorites_document' favori='hadisler' %}" class="btn btn-primary">Kaydet ve Yazdır</a>
+
             {% else %}
             <p>Herhangi bir favoriniz yok!</p>
             {% endif %}
@@ -57,7 +59,8 @@
             {% endfor %}
             <button type="submit" name="action" value="delete_selected">Sil</button>
         </form>
-        <button type="submit" name="action" id="save_kelime">PDF olarak kaydet</button>
+        <!-- <button type="submit" name="action" id="save_kelime">PDF olarak kaydet</button> -->
+        <a href="{% url 'favorites_document' favori='kelimeler' %}" class="btn btn-primary">Kaydet ve Yazdır</a>
         {% else %}
         <p>Herhangi bir favoriniz yok!</p>
         {% endif %}

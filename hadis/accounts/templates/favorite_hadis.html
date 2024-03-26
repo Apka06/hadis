@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang='en'>
+    
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    
+</head>
+
+<body>
+    
+    <ul>
+        {% if favorites_hadis %}
+        <h2>Favori Hadisler</h2>
+            {% for favorite in favorites_hadis %}
+                <li>
+                    {{ favorite.number }} - {{ favorite.content }}: {{favorite.book}} 
+                </li>
+                <br>
+            {% endfor %}
+            {% endif %}
+    </ul>
+    
+    <script>
+        window.onload = function() {
+            window.print();
+    };
+    </script>
+    </body>
+
+</html>
+
