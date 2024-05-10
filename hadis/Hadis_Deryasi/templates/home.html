@@ -6,27 +6,26 @@
     <title>Document</title>
 </head>
 <body>
-    <p>Selamun aleyküm</p>
-    <p>VeAleyküm Selam </p>
+    <p>Hadis Deryası</p>
     <p><a href="{% url 'lugat' %}"> Lugat </a></p>
     <p><a href="{% url 'hadis_deryasi' %}"> Hadis Deryası </a></p>
     <p><a href="{% url 'serh' %}"> Serhler </a></p>
     {% if user.is_authenticated %}
     <p>
-        <form method = "POST" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button type="submit">logout</button>
-        </form>
+        <a href= "{% url 'profile' %}"> Profilim  </a>
     </p>
     <p>
-        <a href= "{% url 'profile' %}"> your profile  </a>
+        <form method = "POST" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit">Çıkış yap</button>
+        </form>
     </p>
     {% else %}
     <p>
-        <a href="{% url 'register' %}">Register</a>
+        <a href="{% url 'register' %}">Üye ol</a>
     </p>
     <p>
-        <a href="{% url 'login' %}">Login</a>
+        <a href="{% url 'login' %}">Giriş yap</a>
     </p>
     {% endif %}
     

@@ -18,6 +18,8 @@ class HomeView(ListView):
 
 class HadisDeryasiView(View):
 
+    #TODO: selected text ile arama
+
     def __init__(self):
         self.arabic_pattern = "[\u0600-\u06FF]+"
         self.star = "**"
@@ -133,6 +135,8 @@ class SerhView(View):
 
 
 class SqlServerConnView(View):
+
+    #TODO: tek ve iki harfli aramalara sınır
     
     def is_arabic(self, text):
         return (langdetect.detect(text) == "ar")
